@@ -1,13 +1,3 @@
-# SYSworks
+# ETS7
 
-### 시스템 프로그래밍 연습 코드
-
-##### 현재 프로젝트 목록
-
-- 만들면서 배우는 인터프리터 (도서, cpp)
-
-- 만들면서 배우는 컴파일러 첫걸음 (도서, c)
-
-- bkscript2 (습작, cpp)
-
-last update : 2025.01.15
+> Kutil gen7, Essential Tools Series 7

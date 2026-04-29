@@ -1,9 +1,0 @@
-sum = 0
-println "수치 입력 (0은 종료)"
-n = input()
-while n != 0
-    sum = sum + n
-    println "   >", sum
-    n = input()
-println sum
-end
