@@ -100,7 +100,7 @@ func main() {
 		// add record
 		logLine := fmt.Sprintf("%d,%d,%s\n", nextNum, now.Unix(), text)
 		if _, err := file.WriteString(logLine); err != nil {
-			fmt.Println("로그 저장 중 오류 발생:", err)
+			fmt.Printf("[ERROR] file write fail: %v", err)
 			break
 		}
 		nextNum++
