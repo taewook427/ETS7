@@ -1,4 +1,4 @@
-// test000 : ETS7 ImgConv
+// test830 : ETS7 Sync It
 package main
 
 import (
