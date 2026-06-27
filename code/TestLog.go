@@ -1,4 +1,4 @@
-// test000 : ETS7 TestLog
+// test828 : ETS7 TestLog
 package main
 
 import (
