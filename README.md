@@ -1,4 +1,4 @@
-# ETS7 v1.0.0
+# ETS7 v1.1.0
 
 > Kutil gen7, Essential Tools Series 7
 
@@ -20,6 +20,18 @@
 | -dst | dirpath | Set destination dir |
 | -crc | | Use CRC32 to compare file |
 | | filepath | Default arg is for file hash |
+
+## RepairIt
+
+- 지정된 폴더에 포함된 파일의 해시값과 패리티를 저장합니다. Stores the hash values ​​and parity of files contained in a specified folder.
+- 하드웨어 비트 로트를 탐지하고 복구합니다. Detects and recovers hardware bit rots.
+- 패리티 데이터는 다음 구조입니다: `[size 8B][CRCs][Parity][meta-crc 4B]` The parity data has the following structure: `[size 8B][CRCs][Parity][meta-crc 4B]`
+
+| flag | value | info |
+| :-- | :-- | :-- |
+| -prt | dirpath | Set parity storage |
+| -check | | Enable readonly mode |
+| | dirpath | Default arg is for target dir |
 
 ## PicIt
 
@@ -46,6 +58,10 @@
 - 대량의 파일을 한 번에 변환합니다. Converts a large number of files at once.
 - 다음과 같은 이미지로의 형식변환을 지원합니다: `jpg, png, webp` Supports conversion to the following image formats: `jpg, png, webp`
 - 다음과 같은 파일의 병합을 지원합니다: `image, pdf` Supports merging the following files: `image, pdf`
+
+## TZConv
+
+- 인자로 폴더나 *.tar.zst 파일을 받아 압축하거나 해제합니다. Get dirpath or *.tar.zst file by argument, compress or decompress it.
 
 ## Build Executable
 
