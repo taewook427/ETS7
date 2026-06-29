@@ -43,6 +43,11 @@ func input(q string) string {
 }
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			os.WriteFile("panic-log.txt", fmt.Appendf(nil, "panic while testlog.main: %v", r), 0644)
+		}
+	}()
 	initEnv()
 	lastNum := -1
 
