@@ -1,4 +1,4 @@
-# ETS7 v1.1.0
+# ETS7 v1.2.0
 
 > Kutil gen7, Essential Tools Series 7
 
@@ -36,7 +36,7 @@
 ## PicIt
 
 - 데이터를 암호화하여 사진 픽셀의 LSB에 숨깁니다. Encrypts data and hides it in the LSB of the photo pixels.
-- JPG, PNG, WEBP 형식의 주형 사진을 설정하면 PNG 결과를 내보냅니다. Gets template photo in JPG, PNG, or WEBP, and exports a PNG result.
+- JPG, PNG, WEBP 형식의 주형 사진을 설정하면 PNG/WEBP 결과를 내보냅니다. Gets template photo in JPG, PNG, or WEBP, and exports a PNG/WEBP result.
 - 기본적으로 2개의 서브픽셀에 1바이트를 인코딩하며 subtle 모드는 4개의 서브픽셀을 사용합니다. 1 byte is encoded for 2 subpixels by default, and subtle mode uses 4 subpixels.
 
 | config | info |
@@ -71,28 +71,38 @@ windows cli
 ```bat
 go mod init example.com
 go mod tidy
-go build -ldflags="-s -w" -trimpath -o code.exe code.go
+go build -ldflags="-s -w" -trimpath -o repairit.exe RepairIt.go
+go build -ldflags="-s -w" -trimpath -o syncit.exe SyncIt.go
+go build -ldflags="-s -w" -trimpath -o testlog.exe TestLog.go
+go build -ldflags="-s -w" -trimpath -o tzconv.exe TZConv.go
 ```
 
 linux/mac cli
 ```bash
 go mod init example.com
 go mod tidy
-go build -ldflags="-s -w" -trimpath -o code code.go
+go build -ldflags="-s -w" -trimpath -o repairit RepairIt.go
+go build -ldflags="-s -w" -trimpath -o syncit SyncIt.go
+go build -ldflags="-s -w" -trimpath -o testlog TestLog.go
+go build -ldflags="-s -w" -trimpath -o tzconv TZConv.go
 ```
 
 windows gui
 ```bat
 go mod init example.com
 go mod tidy
-go build -ldflags="-H windowsgui -s -w" -trimpath -o code.exe code.go
+go build -ldflags="-H windowsgui -s -w" -trimpath -o fileconv.exe FileConv.go
+go build -ldflags="-H windowsgui -s -w" -trimpath -o imgconv.exe ImgConv.go
+go build -ldflags="-H windowsgui -s -w" -trimpath -o picit.exe PicIt.go
 ```
 
 linux/mac gui
 ```bash
 go mod init example.com
 go mod tidy
-go build -ldflags="-s -w" -trimpath -o code code.go
+go build -ldflags="-s -w" -trimpath -o fileconv FileConv.go
+go build -ldflags="-s -w" -trimpath -o imgconv ImgConv.go
+go build -ldflags="-s -w" -trimpath -o picit PicIt.go
 ```
 
 fyne2 GUI requires C compiler and X11 environment. Selection dialog requires Zenity. check and install following packages before build.

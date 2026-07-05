@@ -21,7 +21,7 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 
-	_ "github.com/chai2010/webp"
+	"github.com/chai2010/webp"
 	"github.com/k-atusa/USAG-Lib/Bencode"
 	"github.com/k-atusa/USAG-Lib/Bencrypt"
 	"github.com/taewook427/USAG-KOX/BaseUI"
@@ -38,6 +38,7 @@ type Page struct {
 	TmpList  []string
 	TgtFile  string
 	IsSubtle bool
+	IsWebp   bool
 
 	// unpacking
 	TgtList []string
@@ -134,7 +135,8 @@ func (p *Page) Fill() {
 		}
 	})
 	btn1.Importance = widget.HighImportance
-	chk1 := widget.NewCheck("subtle", func(b bool) { p.IsSubtle = b })
+	chk1a := widget.NewCheck("subtle", func(b bool) { p.IsSubtle = b })
+	chk1b := widget.NewCheck("webp", func(b bool) { p.IsWebp = b })
 
 	// log view
 	p.Logs = make([]string, 0)
@@ -154,7 +156,7 @@ func (p *Page) Fill() {
 
 	// main layout
 	box1a := container.NewGridWithColumns(1, btn0a, btn0b, btn0c, btn1)
-	box1b := container.NewBorder(nil, nil, nil, chk1, ent1)
+	box1b := container.NewBorder(nil, nil, nil, container.NewHBox(chk1a, chk1b), ent1)
 	mainForm := container.NewBorder(nil, nil, box1a, nil, container.NewGridWithColumns(1, lbl0a, lbl0b, lbl0c, box1b))
 	p.Window.SetContent(container.NewBorder(mainForm, nil, nil, nil, p.logList))
 }
@@ -250,9 +252,15 @@ func (p *Page) Pack(key string) {
 		// NRGBA convert
 		bounds := srcImg.Bounds()
 		nrgbaImg := image.NewNRGBA(bounds)
-		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			for x := bounds.Min.X; x < bounds.Max.X; x++ {
-				nrgbaImg.Set(x, y, srcImg.At(x, y))
+		if rgba, ok := srcImg.(*image.RGBA); ok && len(rgba.Pix) == len(nrgbaImg.Pix) {
+			copy(nrgbaImg.Pix, rgba.Pix)
+		} else if nrgba, ok := srcImg.(*image.NRGBA); ok && len(nrgba.Pix) == len(nrgbaImg.Pix) {
+			copy(nrgbaImg.Pix, nrgba.Pix)
+		} else {
+			for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+				for x := bounds.Min.X; x < bounds.Max.X; x++ {
+					nrgbaImg.Set(x, y, srcImg.At(x, y))
+				}
 			}
 		}
 
@@ -299,8 +307,13 @@ func (p *Page) Pack(key string) {
 		}
 		writeBits(nrgbaImg.Pix, cipher, bitsPerSubpixel, offset)
 
-		// set output name=
-		outName := fmt.Sprintf("pack_%d.png", i)
+		// set output name
+		outName := fmt.Sprintf("pack_%d.", i)
+		if p.IsWebp {
+			outName += "webp"
+		} else {
+			outName += "png"
+		}
 		outPath := filepath.Join(filepath.Dir(p.TgtFile), outName)
 		outFile, err := os.Create(outPath)
 		if err != nil {
@@ -309,7 +322,16 @@ func (p *Page) Pack(key string) {
 		}
 
 		// save image
-		err = png.Encode(outFile, nrgbaImg)
+		if p.IsWebp {
+			fakeRGBA := &image.RGBA{
+				Pix:    nrgbaImg.Pix,
+				Stride: nrgbaImg.Stride,
+				Rect:   nrgbaImg.Rect,
+			}
+			err = webp.Encode(outFile, fakeRGBA, &webp.Options{Lossless: true, Exact: true})
+		} else {
+			err = png.Encode(outFile, nrgbaImg)
+		}
 		outFile.Close()
 		if err != nil {
 			p.addLog(fmt.Sprintf("[ERROR] %s: %v", outName, err))
@@ -345,9 +367,15 @@ func (p *Page) Unpack(key string) {
 		// NRGBA convert
 		bounds := srcImg.Bounds()
 		nrgbaImg := image.NewNRGBA(bounds)
-		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			for x := bounds.Min.X; x < bounds.Max.X; x++ {
-				nrgbaImg.Set(x, y, srcImg.At(x, y))
+		if rgba, ok := srcImg.(*image.RGBA); ok && len(rgba.Pix) == len(nrgbaImg.Pix) {
+			copy(nrgbaImg.Pix, rgba.Pix)
+		} else if nrgba, ok := srcImg.(*image.NRGBA); ok && len(nrgba.Pix) == len(nrgbaImg.Pix) {
+			copy(nrgbaImg.Pix, nrgba.Pix)
+		} else {
+			for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+				for x := bounds.Min.X; x < bounds.Max.X; x++ {
+					nrgbaImg.Set(x, y, srcImg.At(x, y))
+				}
 			}
 		}
 
