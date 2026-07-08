@@ -143,19 +143,23 @@ func (p *Page) Fill() {
 }
 
 func (p *Page) addLog(msg string) {
-	p.Logs = append(p.Logs, msg)
-	p.logList.Refresh()
-	p.logList.ScrollToBottom()
+	fyne.Do(func() {
+		p.Logs = append(p.Logs, msg)
+		p.logList.Refresh()
+		p.logList.ScrollToBottom()
+	})
 }
 
 func (p *Page) clearLog() {
-	p.Logs = make([]string, 0)
-	p.logList.Refresh()
+	fyne.Do(func() {
+		p.Logs = make([]string, 0)
+		p.logList.Refresh()
+	})
 }
 
 func (p *Page) clearWork() {
 	if r := recover(); r != nil {
-		dialog.ShowError(fmt.Errorf("[PANIC] %v", r), p.Window)
+		fyne.Do(func() { dialog.ShowError(fmt.Errorf("[PANIC] %v", r), p.Window) })
 	}
 	p.isWorking = false
 	p.addLog("finished work")
