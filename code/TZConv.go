@@ -19,8 +19,8 @@ func compress(dirPath string) error {
 	if err != nil {
 		return err
 	}
-	baseName := filepath.Base(absPath)
-	outputName := baseName + ".tar.zst"
+	parentDir := filepath.Dir(absPath)
+	outputName := filepath.Join(parentDir, filepath.Base(absPath)+".tar.zst")
 
 	numCPU := max(runtime.NumCPU(), 2)
 	fmt.Printf("[COMPRESS] %s -> %s (%d cores)\n", absPath, outputName, numCPU)
@@ -42,7 +42,6 @@ func compress(dirPath string) error {
 	tw := tar.NewWriter(zw)
 	defer tw.Close()
 
-	parentDir := filepath.Dir(absPath)
 	err = filepath.WalkDir(absPath, func(path string, d os.DirEntry, e error) error {
 		// get relative path
 		if e != nil {
@@ -85,9 +84,15 @@ func compress(dirPath string) error {
 
 func decompress(filePath string) error {
 	// open target file
+	absPath, err := filepath.Abs(filePath)
+	if err != nil {
+		return err
+	}
+	outputDir := filepath.Dir(absPath)
+
 	numCPU := max(runtime.NumCPU(), 2)
-	fmt.Printf("[DECOMPRESS] %s (%d cores)\n", filePath, numCPU)
-	inFile, err := os.Open(filePath)
+	fmt.Printf("[DECOMPRESS] %s (%d cores)\n", absPath, numCPU)
+	inFile, err := os.Open(absPath)
 	if err != nil {
 		return err
 	}
@@ -110,10 +115,11 @@ func decompress(filePath string) error {
 		if err != nil {
 			return err
 		}
-		target := filepath.Clean(header.Name)
-		if strings.HasPrefix(target, "..") || filepath.IsAbs(target) {
+		relPath := filepath.Clean(header.Name)
+		if strings.HasPrefix(relPath, "..") || filepath.IsAbs(relPath) {
 			continue
 		}
+		target := filepath.Join(outputDir, relPath)
 
 		// write file
 		fmt.Printf("decompressing %s\n", target)

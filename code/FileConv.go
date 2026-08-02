@@ -347,25 +347,14 @@ func (p *Page) ImgToPDF() {
 			continue
 		}
 
-		// create new PDF page, calculate layout to fit A4 page
-		pdf.AddPage()
+		// create new PDF page matching image size
 		bounds := img.Bounds()
 		imgW := float64(bounds.Dx())
 		imgH := float64(bounds.Dy())
+		pdf.AddPageWithOption(gopdf.PageOption{PageSize: &gopdf.Rect{W: imgW, H: imgH}})
 
-		a4W := gopdf.PageSizeA4.W
-		a4H := gopdf.PageSizeA4.H
-		scale := a4W / imgW
-		if imgH*scale > a4H {
-			scale = a4H / imgH
-		}
-		finalW := imgW * scale
-		finalH := imgH * scale
-		offsetX := (a4W - finalW) / 2
-		offsetY := (a4H - finalH) / 2
-
-		// draw image
-		err = pdf.ImageByHolder(imgHolder, offsetX, offsetY, &gopdf.Rect{W: finalW, H: finalH})
+		// draw image fitting full page
+		err = pdf.ImageByHolder(imgHolder, 0, 0, &gopdf.Rect{W: imgW, H: imgH})
 		if err != nil {
 			p.addLog(fmt.Sprintf("  [ERROR] %v", err))
 			continue

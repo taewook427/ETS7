@@ -1,4 +1,4 @@
-# ETS7 v1.2.0
+# ETS7 v1.2.1
 
 > Kutil gen7, Essential Tools Series 7
 
